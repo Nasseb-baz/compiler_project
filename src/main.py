@@ -1,11 +1,9 @@
-from ast_nodes import ProgramNode, FunctionNode, ReturnNode
+from lexer import tokenize
 
-program = ProgramNode()
+with open("tests/test1.txt", "r", encoding="utf-8") as f:
+    text = f.read()
 
-func = FunctionNode("show_products", 1)
-ret = ReturnNode(2)
+tokens = tokenize(text)
 
-func.add_child(ret)
-program.add_child(func)
-
-program.print_tree()
+for t in tokens:
+    print(f"{t.type:<6} {t.value:<15} line={t.line}")
