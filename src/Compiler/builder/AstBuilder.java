@@ -176,106 +176,25 @@ public class AstBuilder extends TemplateParserBaseVisitor<Node> {
     public Node visitJinjaForStatement(TemplateParser.JinjaForStatementContext ctx) {
         int line = ctx.start.getLine();
 
-        System.out.println("DEBUG: Processing jinjaForStatement at line " + line);
+        String iterator = ctx.forOpen().IDENTIFIER_STMT().getText();
+        String collection = ctx.forOpen().expr().getText();
 
-        // الطريقة الصحيحة: ابحث مباشرة في Tokens
-        List<String> tokens = new ArrayList<>();
+        JinjaForStatement forStmt =
+                new JinjaForStatement(iterator, collection, line);
 
-        // جمع جميع Tokens من stmtContent
-        for (var child : ctx.children) {
-            if (child instanceof TemplateParser.StmtContentContext) {
-                TemplateParser.StmtContentContext stmt = (TemplateParser.StmtContentContext) child;
-
-                // جمع Tokens من stmtContent
-                for (int i = 0; i < stmt.getChildCount(); i++) {
-                    ParseTree stmtChild = stmt.getChild(i);
-
-                    if (stmtChild instanceof TerminalNode) {
-                        TerminalNode terminal = (TerminalNode) stmtChild;
-                        String tokenText = terminal.getText();
-                        String tokenType = TemplateLexer.VOCABULARY.getSymbolicName(terminal.getSymbol().getType());
-
-                        // تجاهل WS_STMT (المسافات) لكن احتفظ بكل شيء آخر
-                        if (!"WS_STMT".equals(tokenType)) {
-                            tokens.add(tokenText);
-                            System.out.println("DEBUG Token: " + tokenType + " -> '" + tokenText + "'");
-                        }
-                    }
-                }
-            }
-        }
-
-        System.out.println("DEBUG Tokens list: " + tokens);
-
-        // البحث عن: for [iterator] in [collection]
-        String iterator = null;
-        String collection = null;
-
-        for (int i = 0; i < tokens.size(); i++) {
-            if ("for".equals(tokens.get(i)) && i + 3 < tokens.size()) {
-                if ("in".equals(tokens.get(i + 2))) {
-                    iterator = tokens.get(i + 1);
-                    collection = tokens.get(i + 3);
-                    break;
-                }
-            }
-        }
-
-        if (iterator == null || collection == null) {
-            System.err.println("Error: Could not parse for statement. Tokens: " + tokens);
-            return null;
-        }
-
-        System.out.println("SUCCESS: Parsed for " + iterator + " in " + collection);
-
-        JinjaForStatement forStmt = new JinjaForStatement(iterator, collection, line);
-
-        // بناء body
         JinjaBlock body = new JinjaBlock(line);
-        if (ctx.htmlContent() != null) {
-            for (var contentCtx : ctx.htmlContent()) {
-                Node content = visit(contentCtx);
-                if (content != null) {
-                    body.addStatement(content);
-                }
+
+        for (var content : ctx.forBody().htmlContent()) {
+            Node node = visit(content);
+            if (node != null) {
+                body.addStatement(node);
             }
         }
 
         forStmt.setBody(body);
         return forStmt;
     }
-    private boolean findForInStmtContent(TemplateParser.StmtContentContext ctx) {
-        if (ctx.FOR() != null) return true;
 
-        // ابحث في أطفال stmtContent
-        for (var child : ctx.children) {
-            if (child.getText().equals("for")) return true;
-        }
-
-        return false;
-    }
-    private List<String> extractIdentifiers(TemplateParser.StmtContentContext ctx) {
-        List<String> identifiers = new ArrayList<>();
-
-        // ابحث عن جميع IDENTIFIER_STMT tokens
-        for (var child : ctx.children) {
-            if (child instanceof TerminalNode) {
-                TerminalNode terminal = (TerminalNode) child;
-                String tokenType = TemplateLexer.VOCABULARY.getSymbolicName(terminal.getSymbol().getType());
-                if ("IDENTIFIER_STMT".equals(tokenType)) {
-                    identifiers.add(child.getText());
-                }
-            }
-        }
-
-        return identifiers;
-    }
-    private void collectStmtText(TemplateParser.StmtContentContext ctx, StringBuilder builder) {
-        for (int i = 0; i < ctx.getChildCount(); i++) {
-            ParseTree child = ctx.getChild(i);
-            builder.append(child.getText()).append(" ");
-        }
-    }
 
 
     // ===== Jinja Expression =====
@@ -303,16 +222,16 @@ public class AstBuilder extends TemplateParserBaseVisitor<Node> {
 
         // إذا كان مجرد متغير
         if (exprStr.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
-            return new JinjaVariable(exprStr, line);
+            return new JinjaVariable(exprStr.trim(), line);
         }
 
         // إذا كان رقماً
         if (exprStr.matches("\\d+(\\.\\d+)?")) {
-            return new JinjaLiteral(exprStr, "number", line);
+            return new JinjaLiteral(exprStr.trim(), "number", line);
         }
 
         // تعبير عام
-        return new JinjaExpression(exprStr, line);
+        return new JinjaExpression(exprStr.trim(), line);
     }
 
     // ===== Jinja Statement (عام) =====

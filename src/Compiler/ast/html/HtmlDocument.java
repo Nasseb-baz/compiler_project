@@ -24,10 +24,8 @@ public class HtmlDocument extends Node {
     @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
-        for (HtmlElement element : elements) {
-            element.accept(visitor);
-        }
     }
+
 
     @Override
     public String toString() {

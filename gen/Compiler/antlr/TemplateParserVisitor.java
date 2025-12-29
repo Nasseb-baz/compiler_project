@@ -71,6 +71,24 @@ public interface TemplateParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitJinjaForStatement(TemplateParser.JinjaForStatementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link TemplateParser#forOpen}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForOpen(TemplateParser.ForOpenContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TemplateParser#forBody}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForBody(TemplateParser.ForBodyContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TemplateParser#forClose}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForClose(TemplateParser.ForCloseContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link TemplateParser#jinjaStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

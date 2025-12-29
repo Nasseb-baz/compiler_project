@@ -24,9 +24,6 @@ public class JinjaBlock extends JinjaNode {
     @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
-        for (Node statement : statements) {
-            statement.accept(visitor);
-        }
     }
 
     @Override

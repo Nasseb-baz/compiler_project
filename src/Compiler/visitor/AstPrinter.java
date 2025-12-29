@@ -4,9 +4,12 @@ package Compiler.visitor;
 import Compiler.ast.*;
 import Compiler.ast.html.*;
 import Compiler.ast.jinja.*;
-
+import java.util.HashSet;
+import java.util.Set;
 public class AstPrinter implements Visitor {
     private int indentLevel = 0;
+
+    private Set<Node> visited = new HashSet<>();
 
     private String getIndent() {
         return "  ".repeat(indentLevel);
@@ -14,6 +17,8 @@ public class AstPrinter implements Visitor {
 
     @Override
     public void visit(HtmlDocument node) {
+        if (visited.contains(node)) return;
+        visited.add(node);
         System.out.println(getIndent() + node.getNodeInfo() + " {");
         indentLevel++;
 
@@ -27,6 +32,8 @@ public class AstPrinter implements Visitor {
 
     @Override
     public void visit(HtmlElement node) {
+        if (visited.contains(node)) return;
+        visited.add(node);
         System.out.print(getIndent() + node.getNodeInfo() + " - <" + node.getTagName() + ">");
 
         if (!node.getAttributes().isEmpty()) {
@@ -55,11 +62,15 @@ public class AstPrinter implements Visitor {
 
     @Override
     public void visit(TextNode node) {
+        if (visited.contains(node)) return;
+        visited.add(node);
         System.out.println(getIndent() + node.getNodeInfo() + " - \"" + node.getContent() + "\"");
     }
 
     @Override
     public void visit(Attribute node) {
+        if (visited.contains(node)) return;
+        visited.add(node);
         if (node.hasValue()) {
             System.out.print(node.getName() + "=\"" + node.getValue() + "\"");
         } else {
@@ -69,6 +80,8 @@ public class AstPrinter implements Visitor {
 
     @Override
     public void visit(JinjaBlock node) {
+        if (visited.contains(node)) return;
+        visited.add(node);
         System.out.println(getIndent() + node.getNodeInfo() + " {");
         indentLevel++;
 
@@ -82,28 +95,44 @@ public class AstPrinter implements Visitor {
 
     @Override
     public void visit(JinjaForStatement node) {
-        System.out.print(getIndent() + node.getNodeInfo() + " - for " +
-                node.getIterator() + " in " + node.getCollection());
+        if (visited.contains(node)) return;
+        visited.add(node);
+        System.out.println(getIndent() + node.getNodeInfo() +
+                " - for " + node.getIterator() + " in " + node.getCollection());
 
-        if (node.getBody() != null && !node.getBody().getStatements().isEmpty()) {
-            System.out.println(" {");
+        if (node.getBody() != null) {
             indentLevel++;
             node.getBody().accept(this);
             indentLevel--;
-            System.out.println(getIndent() + "}");
-        } else {
-            System.out.println();
         }
     }
+//    public void visit(JinjaForStatement node) {
+//        System.out.print(getIndent() + node.getNodeInfo() + " - for " +
+//                node.getIterator() + " in " + node.getCollection());
+//
+//        if (node.getBody() != null && !node.getBody().getStatements().isEmpty()) {
+//            System.out.println(" {");
+//            indentLevel++;
+//            node.getBody().accept(this);
+//            indentLevel--;
+//            System.out.println(getIndent() + "}");
+//        } else {
+//            System.out.println();
+//        }
+//    }
 
     @Override
     public void visit(JinjaExpression node) {
+        if (visited.contains(node)) return;
+        visited.add(node);
         System.out.println(getIndent() + node.getNodeInfo() + " - {{ " +
                 node.getExpression() + " }}");
     }
 
     @Override
     public void visit(JinjaVariable node) {
+        if (visited.contains(node)) return;
+        visited.add(node);
         if (node.hasProperty()) {
             System.out.println(getIndent() + node.getNodeInfo() + " - " +
                     node.getName() + "." + node.getProperty());
@@ -114,6 +143,8 @@ public class AstPrinter implements Visitor {
 
     @Override
     public void visit(JinjaLiteral node) {
+        if (visited.contains(node)) return;
+        visited.add(node);
         System.out.println(getIndent() + node.getNodeInfo() + " - " +
                 node.getType() + ": " + node.getValue());
     }

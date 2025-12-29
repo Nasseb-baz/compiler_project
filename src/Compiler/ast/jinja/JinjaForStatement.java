@@ -34,9 +34,6 @@ public class JinjaForStatement extends JinjaNode {
     @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
-        if (body != null) {
-            body.accept(visitor);
-        }
     }
 
     @Override

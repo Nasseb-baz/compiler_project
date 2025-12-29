@@ -1,9 +1,8 @@
-
-
 import Compiler.ast.*;
 import Compiler.ast.html.*;
 import Compiler.builder.AstBuilder;
 import Compiler.visitor.AstPrinter;
+import Compiler.visitor.SymbolTableBuilder;
 import org.antlr.v4.runtime.*;
 import Compiler.antlr.TemplateParser;
 import Compiler.antlr.TemplateLexer;
@@ -11,11 +10,12 @@ import Compiler.antlr.TemplateLexer;
 public class Main {
     public static void main(String[] args) {
         // النص المطلوب تحليله
-        String input = "<div>\n" +
-                "    {% for product in products %}\n" +
-                "        <h3>{{ product.name }}</h3>\n" +
-                "    {% endfor %}\n" +
-                "</div>";
+        String input = "{% for cat in categories %}" +
+                "<h2>{{ cat.name }}</h2>" +
+                "{% for product in cat.products %}" +
+                "<p>{{ product.name }}</p>"+
+                "{% endfor %}"+
+                "{% endfor %}";
 
         System.out.println("=== INPUT ===");
         System.out.println(input);
@@ -58,6 +58,12 @@ public class Main {
             System.out.println();
             System.out.println("=== AST AS STRING ===");
             System.out.println(ast.toString());
+
+            System.out.println("=== SYMBOL TABLE ===");
+            SymbolTableBuilder symBuilder = new SymbolTableBuilder();
+            ast.accept(symBuilder);
+            symBuilder.getSymbolTable().print();
+
 
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());

@@ -19,7 +19,7 @@ public class JinjaVariable extends JinjaNode {
     }
 
     public String getName() {
-        return name;
+        return name.trim();
     }
 
     public String getProperty() {

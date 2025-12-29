@@ -3,6 +3,7 @@ package Compiler.ast;
 
 public abstract class Node {
     protected String nodeName;
+
     protected int lineNumber;
 
     public Node(String nodeName, int lineNumber) {

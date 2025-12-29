@@ -108,6 +108,36 @@ public interface TemplateParserListener extends ParseTreeListener {
 	 */
 	void exitJinjaForStatement(TemplateParser.JinjaForStatementContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link TemplateParser#forOpen}.
+	 * @param ctx the parse tree
+	 */
+	void enterForOpen(TemplateParser.ForOpenContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TemplateParser#forOpen}.
+	 * @param ctx the parse tree
+	 */
+	void exitForOpen(TemplateParser.ForOpenContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TemplateParser#forBody}.
+	 * @param ctx the parse tree
+	 */
+	void enterForBody(TemplateParser.ForBodyContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TemplateParser#forBody}.
+	 * @param ctx the parse tree
+	 */
+	void exitForBody(TemplateParser.ForBodyContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TemplateParser#forClose}.
+	 * @param ctx the parse tree
+	 */
+	void enterForClose(TemplateParser.ForCloseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TemplateParser#forClose}.
+	 * @param ctx the parse tree
+	 */
+	void exitForClose(TemplateParser.ForCloseContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link TemplateParser#jinjaStatement}.
 	 * @param ctx the parse tree
 	 */
