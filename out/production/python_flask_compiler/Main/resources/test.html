@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+    <h1>My Store</h1>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/products">Products</a></li>
+            <li><a href="/about">About</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <section class="product">
+        <h2>Laptop</h2>
+        <img src="laptop.jpg" alt="Gaming Laptop" width="300">
+        <p class="price">$999.99</p>
+        <p class="description">High-performance gaming laptop</p>
+        <button>Add to Cart</button>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2024 My Store</p>
+</footer>
+
+<script>
+        document.querySelector('button').addEventListener('click', function() {
+            alert('Product added to cart!');
+        });
+    </script>
+</body>
+</html>
